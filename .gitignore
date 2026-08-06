@@ -1,0 +1,17 @@
+# systeme
+.DS_Store
+Thumbs.db
+
+# editeurs
+.vscode/
+.idea/
+*.swp
+
+# dependances et builds eventuels
+node_modules/
+dist/
+build/
+
+# sauvegardes locales
+*.bak
+*.tmp
