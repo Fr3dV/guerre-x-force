@@ -39,7 +39,15 @@ puissance, vitesse maximale).
 **Le monde** : 90 km de côté, relief alpin jusqu'à 2 400 m, lac de 1,7 km,
 métropole avec gratte-ciel et circulation, aéroport international, forêts à
 quatre essences, parcellaire agricole, météo dynamique avec averses et plafond
-nuageux, cycle jour / crépuscule / nuit.
+nuageux, cycle jour / crépuscule / nuit, champs de fleurs alpines, papillons,
+cascade et son arc-en-ciel.
+
+**Le copilote** : un personnage donne des conseils contextuels dans une bulle
+(décollage, décrochage, approche, combat, largage d'eau, météo, nuit). Son
+avatar change d'humeur selon la situation : rassuré, inquiet, apeuré, dépité
+après un crash, hilare sur une belle manœuvre. Sa voix est enregistrée (32
+phrases), coupée par défaut, activable par le bouton en haut à gauche ; quand
+elle parle, le bruit du moteur passe automatiquement en sourdine.
 
 ## Commandes
 
@@ -58,7 +66,10 @@ nuageux, cycle jour / crépuscule / nuit.
 | P | Pause |
 | Échap | Menu |
 
-Sur mobile : joystick à gauche, gaz à droite, boutons en bas.
+Le bouton **COPILOTE** (en haut à gauche) active ou coupe sa voix.
+
+Sur mobile et tablette : manche à gauche, gaz à droite, boutons en bas. Le
+copilote se place en haut à gauche pour ne jamais gêner les commandes.
 
 ## Publier sur GitHub Pages
 
@@ -72,7 +83,7 @@ Le jeu est alors accessible à l'adresse
 ## Structure
 
 ```
-index.html    le jeu complet (HTML, CSS, JS, ~410 Ko)
+index.html    le jeu complet : HTML, CSS, JS, avatars et voix embarques (~1,1 Mo)
 README.md     ce fichier
 .gitignore
 LICENSE
