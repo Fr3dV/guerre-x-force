@@ -15,3 +15,6 @@ build/
 # sauvegardes locales
 *.bak
 *.tmp
+
+# outils locaux
+.claude/

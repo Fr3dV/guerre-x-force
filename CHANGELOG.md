@@ -1,6 +1,35 @@
 # Journal des versions
 
-## v80 (courante)
+## v81 (courante)
+
+**Affichage mobile condensé**
+
+Sur téléphone, les dix champs de la barre du haut passaient à la ligne un
+par un : la barre occupait la moitié de la hauteur et recouvrait la
+minicarte, la réchauffe et le menu. En bas, le tableau de bord mordait sur
+le bouton de tir et la rangée de boutons débordait de l'écran des deux
+côtés.
+
+- Barre du haut : libellés abrégés, champs déjà lisibles ailleurs retirés
+  (train, volets, trim, vent), infos calées à gauche de la minicarte.
+- Tableau de bord : sous 640 px de large ou 520 px de haut, les six cadrans
+  analogiques cèdent la place à un bandeau compact — horizon artificiel
+  conservé, le reste en valeurs numériques (vitesse, altitude, vario, cap,
+  régime) plus deux barres gaz et carburant.
+- Bas de l'écran recalculé en bandes empilées à partir de la hauteur réelle
+  de la rangée de boutons, au lieu d'offsets fixes.
+- Téléphone en paysage : disposition en colonnes, manche et gaz gardent les
+  coins bas, le reste se loge dans la bande centrale.
+- Réchauffe ramenée contre la manette des gaz, abrégée en « PC ».
+- Copilote et bouton de voix replacés sous la barre du haut, bulle bornée
+  pour ne jamais atteindre la colonne de droite.
+
+**Correction hors mobile**
+
+- La réchauffe se cale désormais sous la barre d'infos : dès que la fenêtre
+  rétrécissait, la barre passait à deux lignes et le bouton la recouvrait.
+
+## v80
 
 **Corrections**
 

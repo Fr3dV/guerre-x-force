@@ -188,22 +188,114 @@
   button.go:focus-visible{outline:3px solid #e8f0f6;outline-offset:3px}
   #crashInfo{font-family:'IBM Plex Mono',monospace;color:#8fb8d8;margin:14px 0 20px;line-height:1.9;font-size:.9rem}
   #crashTitle.bad{color:#ff5e4d}
+
+  /* ============================================================
+     PETITS ECRANS : AFFICHAGE CONDENSE
+     Sur telephone, les dix champs de la barre du haut passaient a la
+     ligne un par un : la barre occupait la moitie de la hauteur et
+     recouvrait la minicarte, la rechauffe et le menu. En bas, le
+     tableau de bord chevauchait le bouton de tir et la rangee de
+     boutons debordait de l'ecran des deux cotes.
+
+     On garde donc, sur petit ecran, les seules informations qu'on ne
+     lit pas ailleurs : l'objectif, la structure, le mach et les
+     emports. Le train, les volets, le trim, le carburant et le vent
+     disparaissent de la barre : les trois premiers ont deja leur
+     bouton, les deux derniers sont repris dans le tableau de bord
+     compact. Les libelles longs cedent la place a des abreviations.
+
+     La geometrie du bas (manche, gaz, tir, tableau de bord, boutons)
+     est calculee par layoutTouchHUD() : en bandes empilees, elle
+     depend de la hauteur reelle de la rangee de boutons.
+     ============================================================ */
+  #topbar .ti{display:inline-flex;align-items:baseline;gap:5px;white-space:nowrap}
+  #topbar i{font-style:normal}
+
+  /* La rechauffe est reposionnee par layoutTouchHUD contre la manette
+     des gaz, quelle que soit la largeur : son habillage compact doit
+     donc suivre la meme regle, sinon le libelle long deborde de la
+     boite et vient mordre sur le bouton de tir. */
+  body.touch #machBtn{left:auto;transform:none;font-size:.8rem;letter-spacing:.08em;
+    padding:9px 4px;text-align:center;border-radius:9px;line-height:1.15}
+
+  @media (max-width:640px){
+    /* --- bande du haut : infos calees a gauche, minicarte a droite --- */
+    #topbar{
+      left:8px;transform:none;justify-content:flex-start;
+      max-width:calc(100vw - 112px);
+      font-size:.62rem;letter-spacing:.03em;gap:2px 9px;padding:4px 8px;
+    }
+    #topbar i{display:none}
+    #topbar .ti[data-s]::before{content:attr(data-s);color:#7f97ab;margin-right:4px}
+    #topbar .lo{display:none!important}
+    #topbar .obj{max-width:46vw;overflow:hidden;text-overflow:ellipsis;display:inline-block}
+    #minimap{top:8px;right:8px;width:88px;height:88px}
+
+    /* --- sous la bande : menu et copilote cote a cote ---
+       Le deplacement du menu est reserve au tactile : hors tactile le
+       bouton du copilote reste cale sur le tableau de bord, et les
+       deux se percuteraient. */
+    #menuBtn{font-size:.76rem;padding:6px 10px;letter-spacing:.1em}
+    body.touch #menuBtn{top:52px;left:8px}
+    body.touch #lucasBtn{top:53px!important;left:96px!important;bottom:auto!important;
+      font-size:.58rem!important;padding:5px 9px!important}
+    /* sous la minicarte (8 + 88 px) et non a cote : la bulle du
+       copilote est de largeur variable et venait mordre dessus */
+    body.touch #lucas{top:104px!important;left:8px!important;bottom:auto!important}
+    body.touch #lucasFig{width:54px!important}
+    body.touch #lucasFig img{width:54px!important;height:54px!important}
+    /* la bulle s'arrete avant la colonne de droite (tir et rechauffe,
+       66 px + marges) : sa hauteur varie avec le texte, donc c'est la
+       largeur qui doit garantir l'absence de recouvrement.
+       8 (marge) + 54 (figurine) + 10 (ecart) + 76 (colonne) + 16 */
+    body.touch #lucasBox{max-width:calc(100vw - 164px)!important;font-size:.72rem!important}
+
+    /* --- commandes tactiles : plus compactes --- */
+    body.touch #stickKnob{width:62px;height:62px}
+    body.touch #tbFire{font-size:.9rem}
+    /* la rangee etait posee a left:50% : sa largeur disponible valait
+       donc la moitie de l'ecran et les boutons s'empilaient sur trois
+       lignes. On la tend d'un bord a l'autre. */
+    #tbtnRow{left:8px;right:8px;transform:none;justify-content:center;
+      flex-wrap:wrap;gap:6px}
+    .tbtn{min-width:46px;height:40px;font-size:.72rem;border-radius:8px}
+  }
+
+  /* Telephone en paysage : la hauteur est la ressource rare.
+     On rabote les hauteurs sans toucher aux largeurs. */
+  @media (max-height:460px){
+    /* on abrege les libelles sans rien retirer : en paysage la barre
+       tient alors sur une ou deux lignes au lieu de trois */
+    #topbar i{display:none}
+    #topbar .ti[data-s]::before{content:attr(data-s);color:#7f97ab;margin-right:4px}
+    #topbar{font-size:.6rem;padding:3px 7px;gap:2px 8px}
+    #minimap{width:74px;height:74px}
+    #menuBtn{padding:5px 9px;font-size:.72rem}
+    body.touch #menuBtn{top:44px}
+    body.touch #lucasBtn{top:45px!important;left:92px!important;bottom:auto!important;
+      font-size:.58rem!important;padding:4px 8px!important}
+    body.touch #lucas{display:none!important}   /* le copilote mangerait le ciel */
+    /* les neuf boutons doivent tenir sur une seule ligne dans la bande
+       centrale, entre le manche et la manette des gaz */
+    .tbtn{min-width:40px;height:34px;font-size:.62rem;border-radius:7px}
+    #tbtnRow{gap:5px;flex-wrap:wrap;justify-content:center}
+  }
 </style>
 </head>
 <body>
 
 <div id="topbar" class="hidden">
-  <span id="tObjWrap">&#9678; <b id="tObj">--</b></span>
-  <span id="tHpWrap" style="display:none">STRUCTURE <b id="tHp">100</b>%</span>
-  <span>MACH <b id="tMach">0.00</b></span>
-  <span><span id="bmbWord">BOMBES</span> <b id="tBmb">4</b></span>
-  <span id="mslWrap">MICA <b id="tMsl">4</b></span>
-  <span>TRAIN <b id="tGear">SORTI</b></span>
-  <span>VOLETS <b id="tFlaps">0&deg;</b></span>
-  <span>TRIM <b id="tTrim">0.0</b></span>
-  <span>CARBURANT <b id="tFuel">100</b> L</span>
-  <span>VENT <b id="tWind">--</b></span>
-  <span id="tBrk" style="color:#ff9d5e;display:none">FREINS</span>
+  <span id="tObjWrap" class="ti obj">&#9678; <b id="tObj">--</b></span>
+  <span id="tHpWrap" class="ti" data-s="PV" style="display:none"><i>STRUCTURE</i> <b id="tHp">100</b><i>%</i></span>
+  <span class="ti" data-s="M"><i>MACH</i> <b id="tMach">0.00</b></span>
+  <span class="ti" data-s="B"><i id="bmbWord">BOMBES</i> <b id="tBmb">4</b></span>
+  <span id="mslWrap" class="ti" data-s="MSL"><i>MICA</i> <b id="tMsl">4</b></span>
+  <span class="ti lo" data-s="TRN"><i>TRAIN</i> <b id="tGear">SORTI</b></span>
+  <span class="ti lo" data-s="VLT"><i>VOLETS</i> <b id="tFlaps">0&deg;</b></span>
+  <span class="ti lo" data-s="TRM"><i>TRIM</i> <b id="tTrim">0.0</b></span>
+  <span class="ti lo" data-s="FUEL"><i>CARBURANT</i> <b id="tFuel">100</b><i> L</i></span>
+  <span class="ti lo" data-s="VNT"><i>VENT</i> <b id="tWind">--</b></span>
+  <span id="tBrk" class="ti" style="color:#ff9d5e;display:none">FREINS</span>
 </div>
 <div id="warn"></div>
 <button id="machBtn" class="hidden">&#9650; RECHAUFFE (PC)</button>
@@ -440,7 +532,7 @@ window.addEventListener('unhandledrejection',function(e){
   b.textContent='ERREUR (promesse) : '+(e.reason&&e.reason.message||e.reason);
 });
 </script>
-<script>window.__VER='v80 - Pause corrigee';</script>
+<script>window.__VER='v81 - Mobile condense';</script>
 <script crossorigin="anonymous" src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js?cors=1"></script>
 <script>
 if(typeof THREE==='undefined'){
@@ -490,6 +582,15 @@ addEventListener('resize',()=>{
   renderer.setPixelRatio(Math.min(devicePixelRatio||1,IS_TOUCH?1.5:2));
   if(renderer.shadowMap)renderer.shadowMap.autoUpdate=true;
   try{fitPanel();}catch(e){}
+  /* a la rotation, plusieurs navigateurs mobiles previennent avant
+     d'avoir fige les nouvelles dimensions : la mise en page se
+     calerait alors sur une taille intermediaire. On repasse une fois
+     l'affichage stabilise. */
+  requestAnimationFrame(()=>{try{fitPanel();}catch(e){}});
+  setTimeout(()=>{try{fitPanel();}catch(e){}},250);
+});
+addEventListener('orientationchange',()=>{
+  setTimeout(()=>{try{fitPanel();}catch(e){}},300);
 });
 
 /* dôme de ciel repeignable (jour / crépuscule / nuit) */
@@ -7789,27 +7890,162 @@ function updateCamera(dt){
    PLANCHE DE BORD
 ============================================================ */
 const pv=document.getElementById('panel'),pc=pv.getContext('2d');
+/* Six cadrans analogiques deviennent illisibles sous 640 px de large :
+   en dessous, on bascule sur un bandeau compact (horizon + chiffres).
+   Le canvas change alors de dimensions internes. */
+const PANEL_W=760,PANEL_H=170,PANELC_W=460,PANELC_H=84;
+let panelCompact=false;
+
+/* Mise en page tactile : le bas de l'ecran est decoupe en bandes
+   empilees depuis le bord inferieur (boutons, tableau de bord, puis
+   manche et gaz). Chaque bande part du sommet de la precedente, donc
+   aucune ne peut en recouvrir une autre, quelle que soit la taille de
+   l'ecran. L'ancienne version posait des offsets fixes et un plancher
+   de 220 px sur le tableau de bord : sur telephone ce plancher gagnait
+   contre la place reellement libre, et le panneau mordait sur le
+   bouton de tir. */
+function layoutTouchHUD(el,cw,ch){
+  const W=innerWidth,H=innerHeight;
+  const row=document.getElementById('tbtnRow');
+  const stick=document.getElementById('stickZone');
+  const thr=document.getElementById('thrZone');
+  const fire=document.getElementById('tbFire');
+  const mach=document.getElementById('machBtn');
+  if(mach){mach.style.top='auto';mach.style.left='auto';mach.style.transform='none';mach.style.width='66px';}
+
+  /* Telephone en paysage : empiler boutons, tableau de bord puis
+     commandes ferait remonter le manche en haut de l'ecran, hors de
+     portee du pouce. On passe donc en colonnes : le manche et les gaz
+     gardent les coins bas, tout le reste se loge dans la bande
+     centrale restee libre. */
+  if(H<520){
+    const sw=Math.max(110,Math.min(150,Math.round(H*.44)));
+    if(stick){stick.style.left='10px';stick.style.bottom='8px';
+              stick.style.width=sw+'px';stick.style.height=sw+'px';}
+    if(thr){thr.style.right='10px';thr.style.bottom='8px';
+            thr.style.width='46px';thr.style.height=sw+'px';}
+    if(fire){fire.style.right='66px';fire.style.bottom='8px';
+             fire.style.width='66px';fire.style.height='66px';}
+    if(mach){mach.style.right='66px';mach.style.bottom='84px';}
+
+    const xL=10+sw+10,xR=142;                 /* gaz + tir + marges */
+    const bandW=Math.max(160,W-xL-xR);
+    if(row){
+      row.style.left=xL+'px';row.style.right=xR+'px';
+      row.style.transform='none';row.style.maxWidth='none';row.style.bottom='8px';
+    }
+    const rowH=row?(row.offsetHeight||34):34;
+    const pw=Math.min(bandW,panelCompact?PANELC_W:520),ph=pw*ch/cw;
+    el.style.width=pw+'px';el.style.height=ph+'px';
+    el.style.left=(xL+bandW/2)+'px';          /* centre sur la bande, pas sur l'ecran */
+    el.style.bottom=(8+rowH+8)+'px';el.style.opacity=.9;
+    return;
+  }
+
+  el.style.left='50%';
+  if(row){row.style.left='';row.style.right='';row.style.transform='';}
+
+  /* 1. rangee de boutons, tout en bas, sur une ou deux lignes */
+  let rowH=48;
+  if(row){
+    row.style.maxWidth=(W-12)+'px';
+    row.style.bottom='8px';
+    rowH=row.offsetHeight||48;
+  }
+
+  /* 2. tableau de bord juste au-dessus */
+  const pw=Math.min(W-20,panelCompact?PANELC_W:520);
+  const ph=pw*ch/cw;
+  const yPanel=8+rowH+10;
+  el.style.width=pw+'px';el.style.height=ph+'px';
+  el.style.bottom=yPanel+'px';el.style.opacity=.9;
+
+  /* 3. manche et gaz au-dessus du tableau de bord */
+  const yCtl=yPanel+ph+14;
+  const stickD=Math.max(120,Math.min(160,Math.round(W*.40)));
+  if(stick){
+    stick.style.left='10px';stick.style.bottom=yCtl+'px';
+    stick.style.width=stickD+'px';stick.style.height=stickD+'px';
+  }
+  const thrH=Math.max(110,Math.min(180,Math.round((H-yCtl)*.42)));
+  if(thr){
+    thr.style.right='10px';thr.style.bottom=yCtl+'px';
+    thr.style.width='46px';thr.style.height=thrH+'px';
+  }
+
+  /* 4. tir et rechauffe : empiles au-dessus des gaz si la hauteur le
+        permet, sinon ranges a leur gauche (telephone en paysage) */
+  const stacked=(H-yCtl-thrH)>170;
+  if(stacked){
+    const yFire=yCtl+thrH+12;
+    if(fire){fire.style.right='10px';fire.style.bottom=yFire+'px';
+             fire.style.width='66px';fire.style.height='66px';}
+    if(mach){mach.style.right='10px';mach.style.bottom=(yFire+76)+'px';}
+  }else{
+    if(fire){fire.style.right='66px';fire.style.bottom=yCtl+'px';
+             fire.style.width='66px';fire.style.height='66px';}
+    if(mach){mach.style.right='142px';mach.style.bottom=yCtl+'px';}
+  }
+}
+
+/* La hauteur de la rangee de boutons commande tout l'empilement du bas,
+   et elle varie : une, deux ou trois lignes selon la largeur, et zero
+   tant que les commandes tactiles sont masquees. Plutot que de parier
+   sur le bon moment pour mesurer, on refait la mise en page chaque fois
+   que cette hauteur change. */
+if(IS_TOUCH){
+  /* ramene contre la manette des gaz, le bouton n'a plus la largeur
+     d'un libelle complet : "PC" suffit, c'est le terme deja employe
+     par la barre du haut et par le copilote */
+  const mb=document.getElementById('machBtn');
+  if(mb)mb.innerHTML='&#9650; PC';
+}
+/* Trois evenements decalent la mise en page du bas, et aucun n'est
+   annonce de facon fiable : l'apparition des commandes tactiles (la
+   rangee de boutons passe de zero a une ou deux lignes), la rotation
+   de l'appareil, et l'escamotage des barres du navigateur mobile —
+   qui change la hauteur utile sans toujours emettre de resize.
+   Plutot que de parier sur une notification, on compare trois nombres
+   deux fois par seconde : c'est negligeable et sans angle mort. */
+let __layoutKey='';
+if(IS_TOUCH)setInterval(()=>{
+  const row=document.getElementById('tbtnRow');
+  const key=innerWidth+'x'+innerHeight+'x'+(row?row.offsetHeight:0);
+  if(key===__layoutKey)return;
+  __layoutKey=key;
+  try{fitPanel();}catch(e){}
+},400);
+
 function fitPanel(){
   /* appelable a tout moment, y compris avant la fin du chargement :
      on retrouve le panneau par le document plutot que par une variable
      declaree plus bas (qui n'existe pas encore au premier redimensionnement) */
   const el=document.getElementById('panel');
   if(!el||!el.style)return;
-  let w=Math.min(780,innerWidth-8);
-  if(IS_TOUCH){
-    /* espace reellement libre : largeur totale moins le manche (a gauche)
-       et la manette des gaz + bouton de tir (a droite), avec des marges */
-    const free=innerWidth-(12+168+16)-(16+52+24);
-    w=Math.max(220,Math.min(w*.52,free));
+  const W=innerWidth,H=innerHeight;
+  /* etroit : les six cadrans ne se lisent plus.
+     bas de plafond : ils mangeraient le ciel. */
+  panelCompact=(W<640)||(H<520);
+  const cw=panelCompact?PANELC_W:PANEL_W,ch=panelCompact?PANELC_H:PANEL_H;
+  if(el.width!==cw){el.width=cw;el.height=ch;}
+
+  if(IS_TOUCH){layoutTouchHUD(el,cw,ch);return;}
+
+  const w=Math.min(panelCompact?PANELC_W:780,W-8);
+  el.style.width=w+'px';el.style.height=(w*ch/cw)+'px';
+  /* hors tactile la rechauffe est posee a 58 px du haut : des que la
+     fenetre retrecit, la barre d'infos passe a deux lignes et le
+     bouton la recouvrait. On le cale sous la barre. */
+  {
+    const tb=document.getElementById('topbar'),mb=document.getElementById('machBtn');
+    if(tb&&mb&&tb.offsetHeight>0)mb.style.top=(tb.offsetTop+tb.offsetHeight+8)+'px';
   }
-  el.style.width=w+'px';el.style.height=(w*170/760)+'px';
-  if(IS_TOUCH)el.style.opacity=.88;
   /* Lucas ne doit jamais recouvrir le tableau de bord : s'il n'y a pas
      assez de place a gauche du panneau, on le remonte au-dessus */
   const luc=document.getElementById('lucas'),lb=document.getElementById('lucasBtn');
-  if(luc&&!IS_TOUCH){
-    const panelH=w*170/760;
-    const panelLeft=(innerWidth-w)/2;
+  if(luc){
+    const panelH=w*ch/cw;
+    const panelLeft=(W-w)/2;
     const lucasW=14+104+10+280;           /* marge + figurine + ecart + bulle */
     const clash=panelLeft<lucasW+10;
     const base=clash?panelH+22:14;
@@ -7843,7 +8079,65 @@ function ticks(x,y,r,n,start,end,major){
 }
 function lbl(x,y,t,s,col){pc.fillStyle=col||'#8fa0b0';pc.font=(s||9)+'px "IBM Plex Mono"';pc.textAlign='center';pc.fillText(t,x,y);}
 
+/* Tableau de bord compact : sur telephone, six cadrans de 52 px de
+   rayon reduits a la largeur disponible ne se lisent plus. On garde
+   l'horizon artificiel — seul cadran qu'un chiffre ne remplace pas
+   pour piloter a vue — et on passe le reste en valeurs numeriques,
+   plus deux barres pour les gaz et le carburant. */
+function drawPanelCompact(data){
+  pc.clearRect(0,0,PANELC_W,PANELC_H);
+  pc.fillStyle='rgba(10,16,24,.82)';
+  pc.beginPath();
+  pc.moveTo(0,PANELC_H);pc.lineTo(0,16);pc.quadraticCurveTo(0,4,14,4);
+  pc.lineTo(PANELC_W-14,4);pc.quadraticCurveTo(PANELC_W,4,PANELC_W,16);
+  pc.lineTo(PANELC_W,PANELC_H);pc.closePath();pc.fill();
+
+  /* horizon artificiel */
+  const hx=44,hy=42,hr=30;
+  pc.save();
+  pc.beginPath();pc.arc(hx,hy,hr,0,7);pc.clip();
+  pc.translate(hx,hy);pc.rotate(-data.roll);
+  const py=data.pitch*70;
+  pc.fillStyle='#3d78b8';pc.fillRect(-70,-100+py,140,100);
+  pc.fillStyle='#7a5a34';pc.fillRect(-70,py,140,100);
+  pc.strokeStyle='#fff';pc.lineWidth=1.6;
+  pc.beginPath();pc.moveTo(-70,py);pc.lineTo(70,py);pc.stroke();
+  pc.restore();
+  pc.strokeStyle='#f2c14e';pc.lineWidth=2.2;
+  pc.beginPath();
+  pc.moveTo(hx-15,hy);pc.lineTo(hx-5,hy);pc.moveTo(hx+5,hy);pc.lineTo(hx+15,hy);
+  pc.stroke();
+  pc.lineWidth=2;pc.strokeStyle='#2c333b';
+  pc.beginPath();pc.arc(hx,hy,hr,0,7);pc.stroke();
+
+  /* colonnes numeriques */
+  const col=(x,val,lab,c)=>{
+    pc.textAlign='center';
+    pc.fillStyle=c||'#fff';pc.font='600 20px "IBM Plex Mono",monospace';
+    pc.fillText(val,x,32);
+    pc.fillStyle='#8fa0b0';pc.font='9px "IBM Plex Mono",monospace';
+    pc.fillText(lab,x,46);
+  };
+  col(128,String(Math.round(data.ias)),'km/h IAS');
+  col(200,String(Math.round(data.alt)),'ALT m');
+  col(272,(data.vs>=0?'+':'')+data.vs.toFixed(1),'V/S m/s',
+      data.vs>1?'#8ce8a8':(data.vs<-6?'#ff8a78':'#fff'));
+  col(344,String(data.hdgDeg).padStart(3,'0')+'°','CAP');
+  col(416,Math.round(data.rpm)+'%','N1');
+
+  /* barres gaz et carburant */
+  const bar=(y,tag,frac,c)=>{
+    pc.textAlign='left';pc.fillStyle='#8fa0b0';
+    pc.font='8px "IBM Plex Mono",monospace';pc.fillText(tag,90,y+5);
+    pc.fillStyle='#2c333b';pc.fillRect(126,y,PANELC_W-146,5);
+    pc.fillStyle=c;pc.fillRect(126,y,(PANELC_W-146)*Math.max(0,Math.min(1,frac)),5);
+  };
+  bar(58,'GAZ',data.thr,'#c8f5d0');
+  bar(70,'CARB',data.fuel/100,data.fuel<15?'#e04a3a':'#e8c93e');
+}
+
 function drawPanel(data){
+  if(panelCompact){drawPanelCompact(data);return;}
   pc.clearRect(0,0,760,170);
   pc.fillStyle='rgba(10,16,24,.78)';
   pc.beginPath();
@@ -9125,6 +9419,10 @@ function resumeGame(){
   menuBtn.classList.remove('hidden');
   if(AC.hasPC)machBtn.classList.remove('hidden');
   if(IS_TOUCH)touchUI.classList.remove('hidden');
+  /* la rangee de boutons vient d'apparaitre : tant qu'elle etait
+     masquee sa hauteur valait zero, et la mise en page du bas se
+     calait sur une valeur par defaut */
+  try{fitPanel();}catch(e){}
   paused=false;autoPaused=false;
   suspended=null;
   {
@@ -9145,7 +9443,12 @@ menuBtn.addEventListener('pointerdown',e=>{backToMenu(true);e.preventDefault();}
   try{const s=localStorage.getItem('volLucasVoice');if(s==='1')lucasVoice=true;}catch(e){}
   const btn=document.getElementById('lucasBtn');
   function paintLucas(){
-    if(btn)btn.textContent=lucasVoice?'COPILOTE : VOIX ACTIVE':'COPILOTE : VOIX COUPEE';
+    /* sur telephone le libelle complet mange toute la largeur : on le
+       reduit a l'essentiel, le bouton reste a cote du menu */
+    const court=innerWidth<640||innerHeight<520;
+    if(btn)btn.textContent=lucasVoice
+      ?(court?'VOIX ON':'COPILOTE : VOIX ACTIVE')
+      :(court?'VOIX OFF':'COPILOTE : VOIX COUPEE');
     if(btn)btn.style.color=lucasVoice?'#9fd8ea':'#8a95a0';
   }
   if(btn){
@@ -9316,6 +9619,10 @@ function start(){
     touch.thr=0;
     document.getElementById('thrFillT').style.height='0%';
   }
+  /* barre d'infos, tableau de bord et commandes viennent d'apparaitre :
+     tant qu'ils etaient masques leurs dimensions valaient zero et la
+     mise en page se calait sur des valeurs par defaut */
+  try{fitPanel();}catch(e){}
 }
 let lastNonFirePlane=null,wasFireMode=false,lastMode=null,canadExplicit=false;
 function selectAC(t,id){
