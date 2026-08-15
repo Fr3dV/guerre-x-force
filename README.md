@@ -6,10 +6,10 @@ Aucune installation, aucune dépendance à installer : tout tient dans `index.ht
 
 ## Jouer
 
-Deux possibilités :
+**En ligne : [gxf.gamzu.fr](https://gxf.gamzu.fr)**
 
-1. Ouvrir `index.html` dans un navigateur récent (Chrome, Edge, Firefox, Safari).
-2. Activer GitHub Pages sur ce dépôt (voir plus bas), puis ouvrir l'URL publique.
+Sinon, ouvrir `index.html` dans un navigateur récent (Chrome, Edge, Firefox,
+Safari) : le jeu fonctionne aussi bien en local.
 
 ## Contenu
 
@@ -73,18 +73,27 @@ copilote se place en haut à gauche pour ne jamais gêner les commandes.
 
 ## Publier sur GitHub Pages
 
-1. Onglet **Settings** du dépôt, section **Pages**
-2. Source : branche `main`, dossier `/ (root)`
-3. Enregistrer, puis attendre une minute
+Chaque push sur `main` redéploie le jeu automatiquement, via le workflow
+`.github/workflows/pages.yml`.
 
-Le jeu est alors accessible à l'adresse
-`https://<utilisateur>.github.io/<depot>/`.
+Le domaine public est `gxf.gamzu.fr`, déclaré par le fichier `CNAME` à la racine
+du dépôt. Côté DNS, un seul enregistrement chez le registrar :
+
+| Type | Sous-domaine | Cible |
+|---|---|---|
+| CNAME | `gxf` | `fr3dv.github.io.` |
+
+L'adresse `https://fr3dv.github.io/guerre-x-force/` reste valable et redirige
+vers le domaine personnalisé.
 
 ## Structure
 
 ```
 index.html    le jeu complet : HTML, CSS, JS, avatars et voix embarques (~1,1 Mo)
+CNAME         domaine personnalise pour GitHub Pages
 README.md     ce fichier
+CHANGELOG.md  journal des versions
+deploy.sh     publication d'une nouvelle version
 .gitignore
 LICENSE
 ```
